@@ -1,6 +1,30 @@
 import pyodbc as db
 import random
 
+"""
+TODO:
+1. Сделать рандомное создание "Адрес", где будет улица, город и район
+2. Сделать рандомное создание "Пациент", где будет:
+    - рандомно созданное "ФИО" (реализованно)
+    - рандомно созданное "дата рождения"
+    - присваивание пола отталкиваясь от "ФИО"
+
+{'Addresses': ['AddressID', 'Street', 'City', 'Region'], 
+'Appointments': ['AppointmentID', 'PatientID', 'DoctorID', 'AppointmentDate'],
+'Diseases': ['DiseaseID', 'DiseaseName', 'Symptoms', 'Treatment'],
+'Doctors': ['DoctorID', 'FIO', 'SpecializationID', 'PhoneNumber'],
+'FactTable': ['FactID', 'PatientID', 'DiseaseID', 'DoctorID', 'AppointmentID'],
+'Patients': ['PatientID', 'FIO', 'DateOfBirth', 'Gender', 'AddressID'],
+'Specializations': ['SpecializationID', 'SpecializationName']}
+
+use [RegionalHospital]
+--SELECT table_name FROM information_schema.tables
+
+--SELECT * FROM Addresses
+select table_name from information_schema.tables where table_name NOT LIKE 'sys%'
+"""
+
+
 last_name = [
     "Иванов",
     "Смирнов",
@@ -90,7 +114,6 @@ female_name = [
     "Валерия",
 ]
 
-
 connection = db.connect(
     r"driver={ODBC Driver 17 for SQL Server}; server=DESKTOP-C8OR9VL\SQLEXPRESS; database=RegionalHospital; trusted_connection=yes"
 )
@@ -100,7 +123,6 @@ cursor.execute(
     "select table_name from information_schema.tables where table_name NOT LIKE 'sys%'"
 )
 tables = [row.table_name for row in cursor.fetchall()]
-# print(tables)
 
 columns = {}
 for table in tables:
@@ -108,8 +130,7 @@ for table in tables:
         f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}'"
     )
     columns[table] = [row.column_name for row in cursor.fetchall()]
-
-# print(columns)
+print(columns)
 
 
 def random_fio(male_names, female_names, last_names, patronymics):
@@ -129,17 +150,8 @@ def random_fio(male_names, female_names, last_names, patronymics):
             fio.append(f"{chosen_last_name} {chosen_name} {chosen_patronymics}")
     print(fio)
 
-    # print(f"{chosen_last_name}")
 
-    # names = [male_name, female_name]
-    # name_random = names[random.randint(0, 1)]
-    # name = name_random[random.randint(0, len(name_random[random.randint(0, 1)]))]
-    # name = random.randint(0, len(names[random.randint(0, 1)]))
-    # last_name_index = random.choice(last_name)
-    # print(f"{last_name_index}")
-
-
-random_fio(male_name, female_name, last_name, patronymics)
+# random_fio(male_name, female_name, last_name, patronymics)
 
 
 # with connection as conn:
