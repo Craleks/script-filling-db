@@ -6,7 +6,7 @@ TODO:
 1. Сделать рандомное создание "Адрес", где будет улица, город и район
 2. Сделать рандомное создание "Пациент", где будет:
     - рандомно созданное "ФИО" +
-    - рандомно созданное "дата рождения"
+    - рандомно созданное "дата рождения" +
     - присваивание пола отталкиваясь от "ФИО" +
 
 {'Addresses': ['AddressID', 'Street', 'City', 'Region'], 
@@ -158,27 +158,26 @@ def random_fio(names, last_names, patronymics):
 
 
 def random_birthday():
-    for _ in range(100):
-        year = random.randint(1950, 2010)
-        month = random.randint(1, 12)
+    year = random.randint(1950, 2010)
+    month = random.randint(1, 12)
 
-        if month == 2:
-            if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
-                day = random.randint(1, 29)
-            else:
-                day = random.randint(1, 28)
-        elif month in [4, 6, 9, 11]:
-            day = random.randint(1, 30)
+    if month == 2:
+        if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+            day = random.randint(1, 29)
         else:
-            day = random.randint(1, 31)
+            day = random.randint(1, 28)
+    elif month in [4, 6, 9, 11]:
+        day = random.randint(1, 30)
+    else:
+        day = random.randint(1, 31)
 
-        print(f"{day}.{month}.{year}")
+    return f"{day}.{month}.{year}"
 
 
-# fio = random_fio(names, last_name, patronymics)
-# print(fio)
-random_birthday()
-
+fio = random_fio(names, last_name, patronymics)
+print(fio[1])
+date_of_birth = random_birthday()
+print(date_of_birth)
 # with connection as conn:
 #     cursor = conn.cursor()
 #     cursor.execute(
