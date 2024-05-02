@@ -5,9 +5,9 @@ import random
 TODO:
 1. Сделать рандомное создание "Адрес", где будет улица, город и район
 2. Сделать рандомное создание "Пациент", где будет:
-    - рандомно созданное "ФИО" (реализованно)
+    - рандомно созданное "ФИО" +
     - рандомно созданное "дата рождения"
-    - присваивание пола отталкиваясь от "ФИО"
+    - присваивание пола отталкиваясь от "ФИО" +
 
 {'Addresses': ['AddressID', 'Street', 'City', 'Region'], 
 'Appointments': ['AppointmentID', 'PatientID', 'DoctorID', 'AppointmentDate'],
@@ -24,7 +24,7 @@ use [RegionalHospital]
 select table_name from information_schema.tables where table_name NOT LIKE 'sys%'
 """
 
-
+#!fio
 last_name = [
     "Иванов",
     "Смирнов",
@@ -69,50 +69,52 @@ patronymics = [
     "Степанович",
     "Ярославович",
 ]
-male_name = [
-    "Александр",
-    "Максим",
-    "Иван",
-    "Артем",
-    "Дмитрий",
-    "Никита",
-    "Михаил",
-    "Егор",
-    "Илья",
-    "Даниил",
-    "Роман",
-    "Сергей",
-    "Владимир",
-    "Андрей",
-    "Алексей",
-    "Денис",
-    "Кирилл",
-    "Олег",
-    "Степан",
-    "Ярослав",
-]
-female_name = [
-    "Анастасия",
-    "Анна",
-    "Виктория",
-    "Мария",
-    "Ирина",
-    "Юлия",
-    "Ольга",
-    "Татьяна",
-    "Екатерина",
-    "Полина",
-    "Елена",
-    "Дарья",
-    "Ксения",
-    "Александра",
-    "Евгения",
-    "Светлана",
-    "Алина",
-    "Елизавета",
-    "Наталья",
-    "Валерия",
-]
+names = {
+    "male": [
+        "Александр",
+        "Максим",
+        "Иван",
+        "Артем",
+        "Дмитрий",
+        "Никита",
+        "Михаил",
+        "Егор",
+        "Илья",
+        "Даниил",
+        "Роман",
+        "Сергей",
+        "Владимир",
+        "Андрей",
+        "Алексей",
+        "Денис",
+        "Кирилл",
+        "Олег",
+        "Степан",
+        "Ярослав",
+    ],
+    "female": [
+        "Анастасия",
+        "Анна",
+        "Виктория",
+        "Мария",
+        "Ирина",
+        "Юлия",
+        "Ольга",
+        "Татьяна",
+        "Екатерина",
+        "Полина",
+        "Елена",
+        "Дарья",
+        "Ксения",
+        "Александра",
+        "Евгения",
+        "Светлана",
+        "Алина",
+        "Елизавета",
+        "Наталья",
+        "Валерия",
+    ],
+}
 
 connection = db.connect(
     r"driver={ODBC Driver 17 for SQL Server}; server=DESKTOP-C8OR9VL\SQLEXPRESS; database=RegionalHospital; trusted_connection=yes"
@@ -130,28 +132,31 @@ for table in tables:
         f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}'"
     )
     columns[table] = [row.column_name for row in cursor.fetchall()]
-print(columns)
+# print(columns)
 
 
-def random_fio(male_names, female_names, last_names, patronymics):
+def random_fio(names, last_names, patronymics):
     fio = []
     for _ in range(300):
         chosen_last_name = random.choice(last_names)
         chosen_last_name = random.choice(last_names)
         chosen_patronymics = random.choice(patronymics)
-
-        names = {"male": male_names, "female": female_names}
+        
         gender = random.choice(list(names.keys()))
         chosen_name = random.choice(names[gender])
 
         if gender != "male":
-            fio.append(f"{chosen_last_name}a {chosen_name} {chosen_patronymics[:-2]}на")
+            fio.append(
+                f"{gender} - {chosen_last_name}a {chosen_name} {chosen_patronymics[:-2]}на"
+            )
         else:
-            fio.append(f"{chosen_last_name} {chosen_name} {chosen_patronymics}")
+            fio.append(
+                f"{gender} - {chosen_last_name} {chosen_name} {chosen_patronymics}"
+            )
     print(fio)
 
 
-# random_fio(male_name, female_name, last_name, patronymics)
+random_fio(names, last_name, patronymics)
 
 
 # with connection as conn:
