@@ -141,7 +141,7 @@ def random_fio(names, last_names, patronymics):
         chosen_last_name = random.choice(last_names)
         chosen_last_name = random.choice(last_names)
         chosen_patronymics = random.choice(patronymics)
-        
+
         gender = random.choice(list(names.keys()))
         chosen_name = random.choice(names[gender])
 
@@ -153,11 +153,31 @@ def random_fio(names, last_names, patronymics):
             fio.append(
                 f"{gender} - {chosen_last_name} {chosen_name} {chosen_patronymics}"
             )
-    print(fio)
+
+    return fio
 
 
-random_fio(names, last_name, patronymics)
+def random_birthday():
+    for _ in range(100):
+        year = random.randint(1950, 2010)
+        month = random.randint(1, 12)
 
+        if month == 2:
+            if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+                day = random.randint(1, 29)
+            else:
+                day = random.randint(1, 28)
+        elif month in [4, 6, 9, 11]:
+            day = random.randint(1, 30)
+        else:
+            day = random.randint(1, 31)
+
+        print(f"{day}.{month}.{year}")
+
+
+# fio = random_fio(names, last_name, patronymics)
+# print(fio)
+random_birthday()
 
 # with connection as conn:
 #     cursor = conn.cursor()
