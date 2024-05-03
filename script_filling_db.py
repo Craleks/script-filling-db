@@ -1,5 +1,6 @@
 import pyodbc as db
 import random
+from data import *
 
 """
 TODO:
@@ -24,98 +25,6 @@ use [RegionalHospital]
 select table_name from information_schema.tables where table_name NOT LIKE 'sys%'
 """
 
-#!fio
-last_name = [
-    "Иванов",
-    "Смирнов",
-    "Кузнецов",
-    "Попов",
-    "Васильев",
-    "Петров",
-    "Соколов",
-    "Михайлов",
-    "Новиков",
-    "Федоров",
-    "Морозов",
-    "Волков",
-    "Алексеев",
-    "Лебедев",
-    "Семенов",
-    "Егоров",
-    "Павлов",
-    "Козлов",
-    "Степанов",
-    "Николаев",
-]
-patronymics = [
-    "Александрович",
-    "Максимович",
-    "Иванович",
-    "Артемович",
-    "Дмитриевич",
-    "Никитович",
-    "Михайлович",
-    "Егорович",
-    "Ильич",
-    "Даниилович",
-    "Романович",
-    "Сергеевич",
-    "Владимирович",
-    "Андреевич",
-    "Алексеевич",
-    "Денисович",
-    "Кириллович",
-    "Олегович",
-    "Степанович",
-    "Ярославович",
-]
-names = {
-    "male": [
-        "Александр",
-        "Максим",
-        "Иван",
-        "Артем",
-        "Дмитрий",
-        "Никита",
-        "Михаил",
-        "Егор",
-        "Илья",
-        "Даниил",
-        "Роман",
-        "Сергей",
-        "Владимир",
-        "Андрей",
-        "Алексей",
-        "Денис",
-        "Кирилл",
-        "Олег",
-        "Степан",
-        "Ярослав",
-    ],
-    "female": [
-        "Анастасия",
-        "Анна",
-        "Виктория",
-        "Мария",
-        "Ирина",
-        "Юлия",
-        "Ольга",
-        "Татьяна",
-        "Екатерина",
-        "Полина",
-        "Елена",
-        "Дарья",
-        "Ксения",
-        "Александра",
-        "Евгения",
-        "Светлана",
-        "Алина",
-        "Елизавета",
-        "Наталья",
-        "Валерия",
-    ],
-}
-
 connection = db.connect(
     r"driver={ODBC Driver 17 for SQL Server}; server=DESKTOP-C8OR9VL\SQLEXPRESS; database=RegionalHospital; trusted_connection=yes"
 )
@@ -132,6 +41,14 @@ for table in tables:
         f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}'"
     )
     columns[table] = [row.column_name for row in cursor.fetchall()]
+    # cursor.execute(f"INSERT INTO {table} (AddressID, Street, City, Region) VALUES ")
+
+# for key, column_names in columns.items():
+#     print(f"INSERT INTO {table} ({column_names}) VALUES ")
+s = "['AddressID', 'Street', 'City', 'Region']"
+s = s.replace("[", "").replace("]", "").replace("'", "")
+print(s)
+# for table in table
 # print(columns)
 
 
@@ -174,10 +91,38 @@ def random_birthday():
     return f"{day}.{month}.{year}"
 
 
-fio = random_fio(names, last_name, patronymics)
-print(fio[1])
-date_of_birth = random_birthday()
-print(date_of_birth)
+def random_address(cities, streets, districts):
+    for _ in range(100):
+        city = random.choice(cities)
+        street = random.choice(streets)
+        district = random.choice(districts)
+        house_number = random.randint(1, 127)
+        apartment_number = random.randint(1, 99)
+
+        print(
+            f"Город {city}, {district} район, ул. {street}, дом {house_number}, кв. {apartment_number}"
+        )
+
+
+# for key, values in columns.items():
+#     for value in values:
+#         print(f"Ключ: {key}, Значение: {value}")
+    # for name_column in tab:
+    # print()
+
+# for tab in tables:
+# for name_column in tab:
+# print(name_column)
+# print(columns[tab])
+
+# random_address(cities, streets, districts)
+# print(address)
+# fio = random_fio(names, last_name, patronymics)
+# print(fio)
+# date_of_birth = random_birthday()
+# print(date_of_birth)
+
+
 # with connection as conn:
 #     cursor = conn.cursor()
 #     cursor.execute(
