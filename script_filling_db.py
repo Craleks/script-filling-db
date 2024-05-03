@@ -43,11 +43,11 @@ for table in tables:
     columns[table] = [row.column_name for row in cursor.fetchall()]
     # cursor.execute(f"INSERT INTO {table} (AddressID, Street, City, Region) VALUES ")
 
-# for key, column_names in columns.items():
-#     print(f"INSERT INTO {table} ({column_names}) VALUES ")
-s = "['AddressID', 'Street', 'City', 'Region']"
-s = s.replace("[", "").replace("]", "").replace("'", "")
-print(s)
+for key, column_names in columns.items():
+    clear_column_names = ", ".join(f"{name}" for name in column_names)
+    print(f"INSERT INTO {key} ({clear_column_names}) VALUES ()")
+
+
 # for table in table
 # print(columns)
 
@@ -107,8 +107,8 @@ def random_address(cities, streets, districts):
 # for key, values in columns.items():
 #     for value in values:
 #         print(f"Ключ: {key}, Значение: {value}")
-    # for name_column in tab:
-    # print()
+# for name_column in tab:
+# print()
 
 # for tab in tables:
 # for name_column in tab:
