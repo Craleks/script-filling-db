@@ -126,7 +126,7 @@ def address_random(count):
         house_number = random.randint(1, 127)
         apartment_number = random.randint(1, 99)
 
-        address = f'"ул. {street}, дом {house_number}, кв. {apartment_number}", "{city}", "{district}"'
+        address = f"'ул. {street}, дом {house_number}, кв. {apartment_number}', '{city}', '{district}'"
         addresses.append(address)
 
     return addresses
@@ -194,7 +194,16 @@ def adding_data(columns, table_name):
                 )
             case "Appointments":
                 values = ", ".join(f"({date})" for date in random_date(10))
-        print(f"INSERT INTO {table_name} ({clear_column_names}) VALUES {values};")
+        return f"INSERT INTO {table_name} ({clear_column_names}) VALUES {values};"
+
+
+def request_execution(cursor, request):
+    try:
+        cursor.execute(request)
+        cursor.connection.commit()  # сохраняем изменения
+        print("Запрос выполнен успешно")
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
 
 
 connection = db.connect(
@@ -206,4 +215,4 @@ tables = getting_table_names(cursor)
 columns = getting_column_name(tables)
 
 for table_name in table_filling_order:
-    adding_data(columns, table_name)
+    request_execution(cursor, adding_data(columns, table_name))
