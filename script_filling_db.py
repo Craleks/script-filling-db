@@ -1,5 +1,6 @@
 import pyodbc as db
 import random
+from datetime import datetime
 from data import *
 
 """
@@ -35,11 +36,40 @@ use [RegionalHospital]
 select table_name from information_schema.tables where table_name NOT LIKE 'sys%'
 """
 
+table_filling_order = [
+    "Addresses",
+    "Specializations",
+    "Doctors",
+    "Patients",
+    "Diseases",
+    "Appointments",
+]
 
-def fio_random():
+
+def generate_phone_number(count):
+    phone_numbers = []
+    for _ in range(count):
+        number = "".join(random.choice("0123456789") for _ in range(10))
+        phone_numbers.append(f'"{number}"')
+
+    return phone_numbers
+
+
+def choose_random_disease(count):
+    diseases_info = []
+    for _ in range(count):
+        disease = random.choice(list(diseases.keys()))
+        symptoms = diseases[disease]["symptoms_diseases"]
+        treatment = diseases[disease]["treatments_diseases"]
+        diseases_info.append((disease, symptoms, treatment))
+
+    return diseases_info
+
+
+def fio_random(count):
     fio = []
-    for _ in range(300):
-        chosen_last_name = random.choice(last_names)
+    genders = []
+    for _ in range(count):
         chosen_last_name = random.choice(last_names)
         chosen_patronymics = random.choice(patronymics)
 
@@ -48,29 +78,43 @@ def fio_random():
 
         if gender != "male":
             fio.append(
-                f"{gender} - {chosen_last_name}a {chosen_name} {chosen_patronymics[:-2]}на"
+                f'"{chosen_last_name}a {chosen_name} {chosen_patronymics[:-2]}на"'
             )
+            genders.append("Женский")
         else:
-            fio.append(
-                f"{gender} - {chosen_last_name} {chosen_name} {chosen_patronymics}"
-            )
-    return fio
+            fio.append(f'"{chosen_last_name} {chosen_name} {chosen_patronymics}"')
+            genders.append("Мужской")
+    return fio, genders
 
 
-def birthday_random():
-    year = random.randint(1950, 2010)
-    month = random.randint(1, 12)
+def random_date(count):
+    dates = []
+    for _ in range(count):
+        year = random.randint(2017, datetime.now().year)
+        month = random.randint(1, 12)
+        day = random.randint(1, 28)
+        dates.append(f"{day}.{month}.{year}")
+    return dates
 
-    if month == 2:
-        if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
-            day = random.randint(1, 29)
+
+def birthday_random(count):
+    dates = []
+    for _ in range(count):
+        year = random.randint(1950, 2010)
+        month = random.randint(1, 12)
+
+        if month == 2:
+            if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+                day = random.randint(1, 29)
+            else:
+                day = random.randint(1, 28)
+        elif month in [4, 6, 9, 11]:
+            day = random.randint(1, 30)
         else:
-            day = random.randint(1, 28)
-    elif month in [4, 6, 9, 11]:
-        day = random.randint(1, 30)
-    else:
-        day = random.randint(1, 31)
-    return f"{day}.{month}.{year}"
+            day = random.randint(1, 31)
+
+        dates.append(f"{day}.{month}.{year}")
+    return dates
 
 
 def address_random(count):
@@ -89,48 +133,12 @@ def address_random(count):
 
 
 def specializations_random(count):
+    specializations = []
     for _ in range(count):
-        city = random.choice(cities)
-        street = random.choice(streets)
-        district = random.choice(districts)
-        house_number = random.randint(1, 127)
-        apartment_number = random.randint(1, 99)
+        specialization = random.choice(names_specializations)
+        specializations.append(f'"{specialization}"')
 
-        return f'"ул. {street}, дом {house_number}, кв. {apartment_number}", "{city}", "{district}"'
-
-
-# # cursor = connection.cursor()
-# # cursor.execute(
-# #     "select table_name from information_schema.tables where table_name NOT LIKE 'sys%'"
-# # )
-# # tables = [row.table_name for row in cursor.fetchall()]
-
-# columns = {}
-# for table in tables:
-#     cursor.execute(
-#         f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}' AND column_name NOT LIKE '%ID%'"
-#     )
-#     columns[table] = [row.column_name for row in cursor.fetchall()]
-#     # cursor.execute(f"INSERT INTO {table} (AddressID, Street, City, Region) VALUES ")
-
-# for key, column_names in columns.items():
-#     clear_column_names = ", ".join(f"{name}" for name in column_names)
-#     print(f"INSERT INTO {key} ({clear_column_names})")
-
-
-# def add_data():
-#     for key, column_names in columns.items():
-#     clear_column_names = ", ".join(f"{name}" for name in column_names)
-#     print(f"INSERT INTO {key} ({clear_column_names})")
-
-table_filling_order = [
-    "Addresses",
-    "Specializations",
-    "Doctors",
-    "Patients",
-    "Diseases",
-    "Appointments",
-]
+    return specializations
 
 
 def getting_table_names(cursor):
@@ -158,19 +166,35 @@ def adding_data(columns, table_name):
 
         match table_name:
             case "Addresses":
-                values = address_random(10)
+                values = ", ".join(f"({address})" for address in address_random(10))
             case "Specializations":
-                values = "2"
+                values = ", ".join(
+                    f"({specialization})"
+                    for specialization in specializations_random(2)
+                )
             case "Doctors":
-                values = "3"
+                fio, genders = fio_random(3)
+                values = ", ".join(
+                    f"({fio}, {phone_number})"
+                    for fio, phone_number in zip(fio, generate_phone_number(3))
+                )
             case "Patients":
-                values = "4"
+                fio, genders = fio_random(3)
+                values = ", ".join(
+                    f'({fio}, {phone_number}, "{gender}")'
+                    for fio, phone_number, gender in zip(
+                        fio, birthday_random(3), genders
+                    )
+                )
             case "Diseases":
-                values = "5"
+                diseases_info = choose_random_disease(14)
+                values = ", ".join(
+                    f'("{disease}", "{symptom}", "{treatment}")'
+                    for disease, symptom, treatment in diseases_info
+                )
             case "Appointments":
-                values = "6"
-
-        print(f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values})")
+                values = ", ".join(f"({date})" for date in random_date(10))
+        print(f"INSERT INTO {table_name} ({clear_column_names}) VALUES {values};")
 
 
 connection = db.connect(
