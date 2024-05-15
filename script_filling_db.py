@@ -117,10 +117,25 @@ def getting_column_name(tables):
     return columns
 
 
+def adding_data(columns, table_name):
+    if table_name in columns:
+        column_names = columns[table_name]
+        clear_column_names = ", ".join(f"{name}" for name in column_names)
+        print(f"INSERT INTO {table_name} ({clear_column_names}) VALUES ()")
+    else:
+        print(f"Таблица {table_name} не найдена.")
+
+
 connection = db.connect(
     r"driver={ODBC Driver 17 for SQL Server}; server=DESKTOP-C8OR9VL\SQLEXPRESS; database=RegionalHospital; trusted_connection=yes"
 )
 cursor = connection.cursor()
+
 tables = getting_table_names(connection, cursor)
 columns = getting_column_name(tables)
 
+for i, name in enumerate(tables, start=1):
+    print(f"{i} - {name}")
+name_table = int(input("Введите номер таблицы которую хотите заполнить: "))
+
+adding_data(columns, tables[name_table - 1])
