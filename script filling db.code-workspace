@@ -1,0 +1,88 @@
+{
+    "folders": [
+		{
+			"path": "."
+		}
+	],
+    "settings": {
+        "workbench.sideBar.location": "right",
+        "editor.minimap.enabled": false,
+        "python.autoComplete.extraPaths": [],
+        "python.analysis.extraPaths": [],
+        "[python]": {
+            "editor.defaultFormatter": "ms-python.black-formatter"
+        },
+        "cSpell.language": "en,ru",
+        "git.autofetch": true,
+        "editor.lineHeight": "1.37",
+        "python.languageServer": "Pylance",
+        "editor.renderWhitespace": "all",
+        "workbench.layoutControl.enabled": false,
+        "editor.mouseWheelZoom": true,
+        "terminal.integrated.cursorStyle": "line",
+        "files.autoSave": "afterDelay",
+        "gitlens.views.branches.files.layout": "list",
+        "editor.wordWrap": "on",
+        "workbench.colorCustomizations": {},
+        "editor.unicodeHighlight.allowedLocales": {
+            "ru": true
+        },
+        "workbench.colorTheme": "4fd5cb34-d36e-4a3c-8639-052b19b26ba1",
+        "workbench.activityBar.location": "top",
+        "terminal.integrated.focusAfterRun": "terminal",
+        "workbench.iconTheme": "vscode-jetbrains-icon-theme-2023-auto",
+        "workbench.productIconTheme": "fluent-icons",
+        "cSpell.userWords": [
+            "pyodbc"
+        ],
+        "better-comments.tags": [
+
+            {
+                "tag": "!",
+                "color": "#FF2D00",
+                "strikethrough": false,
+                "underline": false,
+                "backgroundColor": "transparent",
+                "bold": false,
+                "italic": false
+            },
+            {
+                "tag": "?",
+                "color": "#3498DB",
+                "strikethrough": false,
+                "underline": false,
+                "backgroundColor": "transparent",
+                "bold": false,
+                "italic": false
+            },
+            {
+                "tag": "//",
+                "color": "#474747",
+                "strikethrough": true,
+                "underline": false,
+                "backgroundColor": "transparent",
+                "bold": false,
+                "italic": false
+            },
+            {
+                "tag": "todo",
+                "color": "#FF8C00",
+                "strikethrough": false,
+                "underline": false,
+                "backgroundColor": "transparent",
+                "bold": false,
+                "italic": false
+            },
+            {
+                "tag": "*",
+                "color": "#98C379",
+                "strikethrough": false,
+                "underline": false,
+                "backgroundColor": "transparent",
+                "bold": false,
+                "italic": false
+            }
+        ],
+        "better-comments.highlightPlainText": true,
+    }
+}

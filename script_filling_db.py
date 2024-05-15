@@ -25,32 +25,6 @@ use [RegionalHospital]
 select table_name from information_schema.tables where table_name NOT LIKE 'sys%'
 """
 
-connection = db.connect(
-    r"driver={ODBC Driver 17 for SQL Server}; server=DESKTOP-C8OR9VL\SQLEXPRESS; database=RegionalHospital; trusted_connection=yes"
-)
-
-cursor = connection.cursor()
-cursor.execute(
-    "select table_name from information_schema.tables where table_name NOT LIKE 'sys%'"
-)
-tables = [row.table_name for row in cursor.fetchall()]
-
-columns = {}
-for table in tables:
-    cursor.execute(
-        f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}'"
-    )
-    columns[table] = [row.column_name for row in cursor.fetchall()]
-    # cursor.execute(f"INSERT INTO {table} (AddressID, Street, City, Region) VALUES ")
-
-for key, column_names in columns.items():
-    clear_column_names = ", ".join(f"{name}" for name in column_names)
-    print(f"INSERT INTO {key} ({clear_column_names}) VALUES ()")
-
-
-# for table in table
-# print(columns)
-
 
 def random_fio(names, last_names, patronymics):
     fio = []
@@ -70,7 +44,6 @@ def random_fio(names, last_names, patronymics):
             fio.append(
                 f"{gender} - {chosen_last_name} {chosen_name} {chosen_patronymics}"
             )
-
     return fio
 
 
@@ -87,21 +60,97 @@ def random_birthday():
         day = random.randint(1, 30)
     else:
         day = random.randint(1, 31)
-
     return f"{day}.{month}.{year}"
 
 
-def random_address(cities, streets, districts):
-    for _ in range(100):
+def random_address(count):
+    for _ in range(count):
         city = random.choice(cities)
         street = random.choice(streets)
         district = random.choice(districts)
         house_number = random.randint(1, 127)
         apartment_number = random.randint(1, 99)
 
-        print(
-            f"Город {city}, {district} район, ул. {street}, дом {house_number}, кв. {apartment_number}"
-        )
+    return f'"ул. {street}, дом {house_number}, кв. {apartment_number}", "{city}", "{district}"'
+
+
+connection = db.connect(
+    r"driver={ODBC Driver 17 for SQL Server}; server=DESKTOP-C8OR9VL\SQLEXPRESS; database=RegionalHospital; trusted_connection=yes"
+)
+
+cursor = connection.cursor()
+cursor.execute(
+    "select table_name from information_schema.tables where table_name NOT LIKE 'sys%'"
+)
+tables = [row.table_name for row in cursor.fetchall()]
+
+columns = {}
+for table in tables:
+    cursor.execute(
+        f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}' AND column_name NOT LIKE '%ID%'"
+    )
+    columns[table] = [row.column_name for row in cursor.fetchall()]
+    # cursor.execute(f"INSERT INTO {table} (AddressID, Street, City, Region) VALUES ")
+
+for key, column_names in columns.items():
+    clear_column_names = ", ".join(f"{name}" for name in column_names)
+    print(f"INSERT INTO {key} ({clear_column_names}) VALUES ({random_address(3)})")
+
+
+# for table in table
+# print(columns)
+
+
+# def random_fio(names, last_names, patronymics):
+#     fio = []
+#     for _ in range(300):
+#         chosen_last_name = random.choice(last_names)
+#         chosen_last_name = random.choice(last_names)
+#         chosen_patronymics = random.choice(patronymics)
+
+#         gender = random.choice(list(names.keys()))
+#         chosen_name = random.choice(names[gender])
+
+#         if gender != "male":
+#             fio.append(
+#                 f"{gender} - {chosen_last_name}a {chosen_name} {chosen_patronymics[:-2]}на"
+#             )
+#         else:
+#             fio.append(
+#                 f"{gender} - {chosen_last_name} {chosen_name} {chosen_patronymics}"
+#             )
+
+#     return fio
+
+
+# def random_birthday():
+#     year = random.randint(1950, 2010)
+#     month = random.randint(1, 12)
+
+#     if month == 2:
+#         if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+#             day = random.randint(1, 29)
+#         else:
+#             day = random.randint(1, 28)
+#     elif month in [4, 6, 9, 11]:
+#         day = random.randint(1, 30)
+#     else:
+#         day = random.randint(1, 31)
+
+#     return f"{day}.{month}.{year}"
+
+
+# def random_address(cities, streets, districts):
+#     for _ in range(100):
+#         city = random.choice(cities)
+#         street = random.choice(streets)
+#         district = random.choice(districts)
+#         house_number = random.randint(1, 127)
+#         apartment_number = random.randint(1, 99)
+
+#         print(
+#             f"Город {city}, {district} район, ул. {street}, дом {house_number}, кв. {apartment_number}"
+#         )
 
 
 # for key, values in columns.items():
