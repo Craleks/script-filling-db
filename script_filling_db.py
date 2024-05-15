@@ -26,7 +26,7 @@ select table_name from information_schema.tables where table_name NOT LIKE 'sys%
 """
 
 
-def random_fio(names, last_names, patronymics):
+def random_fio():
     fio = []
     for _ in range(300):
         chosen_last_name = random.choice(last_names)
@@ -71,7 +71,7 @@ def random_address(count):
         house_number = random.randint(1, 127)
         apartment_number = random.randint(1, 99)
 
-    return f'"ул. {street}, дом {house_number}, кв. {apartment_number}", "{city}", "{district}"'
+        return f'"ул. {street}, дом {house_number}, кв. {apartment_number}", "{city}", "{district}"'
 
 
 connection = db.connect(
@@ -94,7 +94,7 @@ for table in tables:
 
 for key, column_names in columns.items():
     clear_column_names = ", ".join(f"{name}" for name in column_names)
-    print(f"INSERT INTO {key} ({clear_column_names}) VALUES ({random_address(3)})")
+    print(f"INSERT INTO {key} ({clear_column_names})")
 
 
 # for table in table
