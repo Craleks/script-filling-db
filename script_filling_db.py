@@ -3,6 +3,16 @@ import random
 from data import *
 
 """
+ПОРЯДОК ЗАПОЛНЕНИЯ ТАБЛИЦ
+1. Addresses: Эта таблица не имеет зависимостей от других таблиц, поэтому её можно заполнить первой.
+2. Specializations: Эта таблица также не имеет зависимостей от других таблиц, поэтому её можно заполнить после таблицы Addresses.
+3. Doctors: Эта таблица зависит от таблицы Specializations, поэтому её следует заполнить после таблицы Specializations.
+4. Patients: Эта таблица зависит от таблицы Addresses, поэтому её следует заполнить после таблицы Addresses.
+5. Diseases: Эта таблица не имеет зависимостей от других таблиц, поэтому её можно заполнить после предыдущих таблиц.
+6. Appointments: Эта таблица зависит от таблиц Doctors и Patients, поэтому её следует заполнить после этих таблиц.
+7. FactTable: Эта таблица зависит от всех остальных таблиц, поэтому её следует заполнить последней.
+
+
 TODO:
 1. Сделать рандомное создание "Адрес", где будет улица, город и район
 2. Сделать рандомное создание "Пациент", где будет:
@@ -26,7 +36,7 @@ select table_name from information_schema.tables where table_name NOT LIKE 'sys%
 """
 
 
-def random_fio():
+def fio_random():
     fio = []
     for _ in range(300):
         chosen_last_name = random.choice(last_names)
@@ -47,7 +57,7 @@ def random_fio():
     return fio
 
 
-def random_birthday():
+def birthday_random():
     year = random.randint(1950, 2010)
     month = random.randint(1, 12)
 
@@ -63,7 +73,22 @@ def random_birthday():
     return f"{day}.{month}.{year}"
 
 
-def random_address(count):
+def address_random(count):
+    addresses = []
+    for _ in range(count):
+        city = random.choice(cities)
+        street = random.choice(streets)
+        district = random.choice(districts)
+        house_number = random.randint(1, 127)
+        apartment_number = random.randint(1, 99)
+
+        address = f'"ул. {street}, дом {house_number}, кв. {apartment_number}", "{city}", "{district}"'
+        addresses.append(address)
+
+    return addresses
+
+
+def specializations_random(count):
     for _ in range(count):
         city = random.choice(cities)
         street = random.choice(streets)
@@ -98,8 +123,17 @@ def random_address(count):
 #     clear_column_names = ", ".join(f"{name}" for name in column_names)
 #     print(f"INSERT INTO {key} ({clear_column_names})")
 
+table_filling_order = [
+    "Addresses",
+    "Specializations",
+    "Doctors",
+    "Patients",
+    "Diseases",
+    "Appointments",
+]
 
-def getting_table_names(connection, cursor):
+
+def getting_table_names(cursor):
     cursor.execute(
         "select table_name from information_schema.tables where table_name NOT LIKE 'sys%'"
     )
@@ -121,9 +155,22 @@ def adding_data(columns, table_name):
     if table_name in columns:
         column_names = columns[table_name]
         clear_column_names = ", ".join(f"{name}" for name in column_names)
-        print(f"INSERT INTO {table_name} ({clear_column_names}) VALUES ()")
-    else:
-        print(f"Таблица {table_name} не найдена.")
+
+        match table_name:
+            case "Addresses":
+                values = address_random(10)
+            case "Specializations":
+                values = "2"
+            case "Doctors":
+                values = "3"
+            case "Patients":
+                values = "4"
+            case "Diseases":
+                values = "5"
+            case "Appointments":
+                values = "6"
+
+        print(f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values})")
 
 
 connection = db.connect(
@@ -131,11 +178,8 @@ connection = db.connect(
 )
 cursor = connection.cursor()
 
-tables = getting_table_names(connection, cursor)
+tables = getting_table_names(cursor)
 columns = getting_column_name(tables)
 
-for i, name in enumerate(tables, start=1):
-    print(f"{i} - {name}")
-name_table = int(input("Введите номер таблицы которую хотите заполнить: "))
-
-adding_data(columns, tables[name_table - 1])
+for table_name in table_filling_order:
+    adding_data(columns, table_name)
