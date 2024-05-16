@@ -50,7 +50,7 @@ def generate_phone_number(count):
     phone_numbers = []
     for _ in range(count):
         number = "".join(random.choice("0123456789") for _ in range(10))
-        phone_numbers.append(f'"{number}"')
+        phone_numbers.append(f"'{number}'")
 
     return phone_numbers
 
@@ -78,12 +78,12 @@ def fio_random(count):
 
         if gender != "male":
             fio.append(
-                f'"{chosen_last_name}a {chosen_name} {chosen_patronymics[:-2]}на"'
+                f"'{chosen_last_name}a {chosen_name} {chosen_patronymics[:-2]}на'"
             )
-            genders.append("Женский")
+            genders.append('Ж')
         else:
-            fio.append(f'"{chosen_last_name} {chosen_name} {chosen_patronymics}"')
-            genders.append("Мужской")
+            fio.append(f"'{chosen_last_name} {chosen_name} {chosen_patronymics}'")
+            genders.append('М')
     return fio, genders
 
 
@@ -136,7 +136,7 @@ def specializations_random(count):
     specializations = []
     for _ in range(count):
         specialization = random.choice(names_specializations)
-        specializations.append(f'"{specialization}"')
+        specializations.append(f"'{specialization}'")
 
     return specializations
 
@@ -169,7 +169,7 @@ def adding_data(columns, table_name):
                 values = ", ".join(f"({address})" for address in address_random(10))
             case "Specializations":
                 values = ", ".join(
-                    f"({specialization})"
+                    f'({specialization})'
                     for specialization in specializations_random(2)
                 )
             case "Doctors":
@@ -181,19 +181,19 @@ def adding_data(columns, table_name):
             case "Patients":
                 fio, genders = fio_random(3)
                 values = ", ".join(
-                    f'({fio}, {phone_number}, "{gender}")'
-                    for fio, phone_number, gender in zip(
+                    f"({fio}, '{birthday}', '{gender}')"
+                    for fio, birthday, gender in zip(
                         fio, birthday_random(3), genders
                     )
                 )
             case "Diseases":
                 diseases_info = choose_random_disease(14)
                 values = ", ".join(
-                    f'("{disease}", "{symptom}", "{treatment}")'
+                    f"('{disease}', '{symptom}', '{treatment}')"
                     for disease, symptom, treatment in diseases_info
                 )
             case "Appointments":
-                values = ", ".join(f"({date})" for date in random_date(10))
+                values = ", ".join(f"('{date}')" for date in random_date(10))
         return f"INSERT INTO {table_name} ({clear_column_names}) VALUES {values};"
 
 
@@ -207,7 +207,7 @@ def request_execution(cursor, request):
 
 
 connection = db.connect(
-    r"driver={ODBC Driver 17 for SQL Server}; server=DESKTOP-C8OR9VL\SQLEXPRESS; database=RegionalHospital; trusted_connection=yes"
+    r"driver={ODBC Driver 17 for SQL Server}; server=DESKTOP-C8OR9VL\SQLEXPRESS; database=hosp_test1; trusted_connection=yes"
 )
 cursor = connection.cursor()
 
