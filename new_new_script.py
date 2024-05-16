@@ -8,15 +8,16 @@ from mimesis.builtins import RussiaSpecProvider
 address = Address("ru")
 person = Person("ru")
 ru = RussiaSpecProvider()
+disease_names = list(diseases.keys())
 
 table_filling_order = [
     "Addresses",
     "Specializations",
     "Doctors",
     "Patients",
-    # "Diseases",
-    # "Appointments",
-    # "FactTable",
+    "Diseases",
+    "Appointments",
+    "FactTable",
 ]
 
 
@@ -30,10 +31,34 @@ def get_address_ids(cursor):
     return [row.AddressID for row in cursor.fetchall()]
 
 
+def get_patient_ids(cursor):
+    cursor.execute("SELECT PatientID FROM Patients")
+    return [row.PatientID for row in cursor.fetchall()]
+
+
+def get_doctor_ids(cursor):
+    cursor.execute("SELECT DoctorID FROM Doctors")
+    return [row.DoctorID for row in cursor.fetchall()]
+
+
+def get_disease_ids(cursor):
+    cursor.execute("SELECT DiseaseID FROM Diseases")
+    return [row.DiseaseID for row in cursor.fetchall()]
+
+
+def get_appointment_ids(cursor):
+    cursor.execute("SELECT AppointmentID FROM Appointments")
+    return [row.AppointmentID for row in cursor.fetchall()]
+
+
 def generate_data():
     rd_gender = random.choice([Gender.MALE, Gender.FEMALE])
     specialization_ids = get_specialization_ids(cursor)
     address_ids = get_address_ids(cursor)
+    patient_ids = get_patient_ids(cursor)
+    doctor_ids = get_doctor_ids(cursor)
+    disease_ids = get_disease_ids(cursor)
+    appointment_ids = get_appointment_ids(cursor)
     data = {
         "Addresses": {
             "Street": f"ул. {address.street_name()} {random.randint(1, 200)}, кв. {random.randint(1, 200)}",
@@ -53,6 +78,22 @@ def generate_data():
             "FIO": f"{person.last_name(gender=rd_gender)} {person.first_name(gender=rd_gender)} {ru.patronymic(gender=rd_gender)}",
             "DateOfBirth": person.birthdate(min_year=1980, max_year=2023),
             "Gender": str(rd_gender.name)[0],
+        },
+        "Diseases": {
+            "DiseaseName": random.choice(disease_names),
+            "Symptoms": diseases[random.choice(disease_names)]["symptoms_diseases"],
+            "Treatment": diseases[random.choice(disease_names)]["treatments_diseases"],
+        },
+        "Appointments": {
+            "PatientID": random.choice(patient_ids),
+            "DoctorID": random.choice(doctor_ids),
+            "AppointmentDate": person.birthdate(min_year=2018, max_year=2023),
+        },
+        "FactTable": {
+            "PatientID": random.choice(patient_ids),
+            "DiseaseID": random.choice(disease_ids),
+            "DoctorID": random.choice(doctor_ids),
+            "AppointmentID": random.choice(appointment_ids),
         },
     }
     return data
@@ -107,8 +148,8 @@ def adding_data(columns, table_name, num_records):
 
             values = ", ".join(f"'{value}'" for value in data.values())
 
-            print(f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values});")
-            # return f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values});"
+            # print(f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values});")
+            return f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values});"
 
 
 connection = db.connect(
