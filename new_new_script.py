@@ -39,7 +39,7 @@ def request_execution(cursor, request):
         logging.error(f"Произошла ошибка: {e}")
 
 
-def generate_data():
+def generate_data_for_table(table_name):
     rd_gender = random.choice([Gender.MALE, Gender.FEMALE])
     data = {
         "Addresses": {
@@ -82,7 +82,7 @@ def generate_data():
             ),
         },
     }
-    return data
+    return data[table_name]
 
 
 def getting_table_names(cursor):
@@ -108,12 +108,13 @@ def adding_data(table_name, num_records):
     clear_column_names = ", ".join(f"{name}" for name in columns)
 
     for _ in range(num_records):
-        data = generate_data()[table_name]
+        data = generate_data_for_table(table_name)
 
         values = ", ".join(f"'{value}'" for value in data.values())
 
         print(f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values});")
         return f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values});"
+    # print()
 
 
 connection = db.connect(
