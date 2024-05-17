@@ -21,6 +21,18 @@ table_filling_order = [
 ]
 
 
+def get_primary_keys(cursor, table_name):
+    cursor.execute(
+        f"""
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+        WHERE TABLE_NAME = '{table_name}' AND
+        OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.' + CONSTRAINT_NAME), 'IsPrimaryKey') = 1
+    """
+    )
+    return [row[0] for row in cursor.fetchall()]
+
+
 def get_ids(cursor, column_name, table_name):
     cursor.execute(f"SELECT {column_name} FROM {table_name}")
     return [row[0] for row in cursor.fetchall()]
@@ -99,16 +111,21 @@ def generate_fact_table_data():
 
 
 def generate_data_for_table(table_name):
-    data_generators = {
-        "Addresses": generate_addresses_data,
-        "Specializations": generate_specializations_data,
-        "Doctors": generate_doctors_data,
-        "Patients": generate_patients_data,
-        "Diseases": generate_diseases_data,
-        "Appointments": generate_appointments_data,
-        "FactTable": generate_fact_table_data,
-    }
-    return data_generators[table_name]
+    match table_name:
+        case "Addresses":
+            return generate_addresses_data()
+        case "Specializations":
+            return generate_specializations_data()
+        case "Doctors":
+            return generate_doctors_data()
+        case "Patients":
+            return generate_patients_data()
+        case "Diseases":
+            return generate_diseases_data()
+        case "Appointments":
+            return generate_appointments_data()
+        case "FactTable":
+            return generate_fact_table_data()
 
 
 def getting_table_names(cursor):
@@ -130,16 +147,17 @@ def getting_column_name(tables):
 
 
 def adding_data(table_name, num_records, columns):
-    # columns = getting_column_name(table_name)
-    clear_column_names = ", ".join(f"{name}" for name in columns.values())
+    primary_keys = get_primary_keys(cursor, table_name)
+    clear_column_names = [
+        name for name in columns[table_name] if name not in primary_keys
+    ]
+    clear_column_names_str = ", ".join(clear_column_names)
 
     for _ in range(num_records):
         data = generate_data_for_table(table_name)
-
-        values = ", ".join(f"'{value}'" for value in data.values())
-
-        print(f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values});")
-        return f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values});"
+        values = ", ".join(f"'{value}'" for key, value in data.items())
+        # print(f"INSERT INTO {table_name} ({clear_column_names_str}) VALUES ({values});")
+        return f"INSERT INTO {table_name} ({clear_column_names_str}) VALUES ({values});"
 
 
 connection = db.connect(
@@ -149,5 +167,6 @@ connection = db.connect(
 with connection.cursor() as cursor:
     tables = getting_table_names(cursor)
     columns = getting_column_name(tables)
+
     for table_name in table_filling_order:
-        request_execution(cursor, adding_data(table_name, 7, columns))
+        request_execution(cursor, adding_data(table_name, 3, columns))
