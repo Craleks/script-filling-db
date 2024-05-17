@@ -190,7 +190,10 @@ diseases = {
         "symptoms_diseases": "Одышка, затрудненное дыхание",
         "treatments_diseases": "Ингаляторы, стероиды",
     },
-    "Бронхит": {"symptoms_diseases": "Кашель, одышка", "treatments_diseases": "Антибиотики, отдых"},
+    "Бронхит": {
+        "symptoms_diseases": "Кашель, одышка",
+        "treatments_diseases": "Антибиотики, отдых",
+    },
     "Пневмония": {
         "symptoms_diseases": "Высокая температура, кашель, одышка",
         "treatments_diseases": "Антибиотики, отдых",
@@ -211,12 +214,18 @@ diseases = {
         "symptoms_diseases": "Боль в груди, одышка, усталость",
         "treatments_diseases": "Антикоагулянты, статины",
     },
-    "Артрит": {"symptoms_diseases": "Боль и отек в суставах", "treatments_diseases": "НПВС, стероиды"},
+    "Артрит": {
+        "symptoms_diseases": "Боль и отек в суставах",
+        "treatments_diseases": "НПВС, стероиды",
+    },
     "Остеоартрит": {
         "symptoms_diseases": "Боль в суставах, ограничение подвижности",
         "treatments_diseases": "НПВС, физиотерапия",
     },
-    "Гастрит": {"symptoms_diseases": "Боль в животе, тошнота", "treatments_diseases": "Антациды, диета"},
+    "Гастрит": {
+        "symptoms_diseases": "Боль в животе, тошнота",
+        "treatments_diseases": "Антациды, диета",
+    },
     "Язва желудка": {
         "symptoms_diseases": "Жгучая боль в животе, тошнота",
         "treatments_diseases": "Антациды, диета",
@@ -266,7 +275,7 @@ diseases = {
         "treatments_diseases": "Антибиотики, хирургическое вмешательство",
     },
     "Катаракта": {
-        "symptoms_diseases": "Ухудшение зрения, 'пелена' перед глазами",
+        "symptoms_diseases": "Ухудшение зрения, пелена перед глазами",
         "treatments_diseases": "Хирургическое вмешательство",
     },
     "Глаукома": {

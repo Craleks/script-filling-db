@@ -12,10 +12,8 @@ disease_names = list(diseases.keys())
 
 table_filling_order = [
     "Addresses",
-    "Specializations",
     "Doctors",
     "Patients",
-    "Diseases",
     "Appointments",
     "FactTable",
 ]
@@ -38,13 +36,14 @@ def get_ids(cursor, column_name, table_name):
     return [row[0] for row in cursor.fetchall()]
 
 
-def request_execution(cursor, request):
-    try:
-        cursor.execute(request)
-        cursor.connection.commit()
-        print("Запрос выполнен успешно")
-    except Exception as e:
-        print(f"Произошла ошибка: {e}")
+def request_execution(cursor, requests):
+    for request in requests:
+        try:
+            cursor.execute(request)
+            cursor.connection.commit()
+            print("Запрос выполнен успешно")
+        except Exception as e:
+            print(f"Произошла ошибка: {e}")
 
 
 def generate_addresses_data():
@@ -153,11 +152,16 @@ def adding_data(table_name, num_records, columns):
     ]
     clear_column_names_str = ", ".join(clear_column_names)
 
+    requests = []
+
     for _ in range(num_records):
         data = generate_data_for_table(table_name)
         values = ", ".join(f"'{value}'" for key, value in data.items())
-        # print(f"INSERT INTO {table_name} ({clear_column_names_str}) VALUES ({values});")
-        return f"INSERT INTO {table_name} ({clear_column_names_str}) VALUES ({values});"
+        request = (
+            f"INSERT INTO {table_name} ({clear_column_names_str}) VALUES ({values});"
+        )
+        requests.append(request)
+    return requests
 
 
 connection = db.connect(
@@ -169,4 +173,5 @@ with connection.cursor() as cursor:
     columns = getting_column_name(tables)
 
     for table_name in table_filling_order:
-        request_execution(cursor, adding_data(table_name, 3, columns))
+        requests = adding_data(table_name, 100, columns)
+        request_execution(cursor, requests)
