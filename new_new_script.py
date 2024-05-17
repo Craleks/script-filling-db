@@ -4,10 +4,6 @@ from data import *
 from mimesis import Address, Person
 from mimesis.enums import Gender
 from mimesis.builtins import RussiaSpecProvider
-import logging
-
-# Настройка логирования
-logging.basicConfig(filename="database.log", level=logging.ERROR)
 
 address = Address("ru")
 person = Person("ru")
@@ -36,10 +32,10 @@ def request_execution(cursor, request):
         cursor.connection.commit()
         print("Запрос выполнен успешно")
     except Exception as e:
-        logging.error(f"Произошла ошибка: {e}")
+        print(f"Произошла ошибка: {e}")
 
 
-def generate_data_for_table(table_name):
+def generate_data():
     rd_gender = random.choice([Gender.MALE, Gender.FEMALE])
     data = {
         "Addresses": {
@@ -82,7 +78,7 @@ def generate_data_for_table(table_name):
             ),
         },
     }
-    return data[table_name]
+    return data
 
 
 def getting_table_names(cursor):
@@ -108,13 +104,12 @@ def adding_data(table_name, num_records):
     clear_column_names = ", ".join(f"{name}" for name in columns)
 
     for _ in range(num_records):
-        data = generate_data_for_table(table_name)
+        data = generate_data()[table_name]
 
         values = ", ".join(f"'{value}'" for value in data.values())
 
         print(f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values});")
         return f"INSERT INTO {table_name} ({clear_column_names}) VALUES ({values});"
-    # print()
 
 
 connection = db.connect(
